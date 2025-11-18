@@ -65,6 +65,9 @@
         var isIBooksWidget = false;
         let autoRotate = true;
 
+        keyshotXR = new keyshotXR(nameOfDiv,folderName,viewPortWidth,viewPortHeight,backgroundColor,uCount,vCount,uWrap,vWrap,uMouseSensitivity,vMouseSensitivity,uStartIndex,vStartIndex,minZoom,maxZoom,rotationDamping,downScaleToBrowser,addDownScaleGUIButton,downloadOnInteraction,imageExtension,showLoading,loadingIcon,allowFullscreen,uReverse,vReverse,hotspots,isIBooksWidget);
+      }
+
 let autoRotate = true;
 let currentFrame = 0;
 
@@ -90,10 +93,6 @@ function startAutoRotate() {
 // Khi user tương tác → tắt auto rotate
 document.addEventListener("pointerdown", () => autoRotate = false);
 document.addEventListener("touchstart", () => autoRotate = false);
-
-
-        keyshotXR = new keyshotXR(nameOfDiv,folderName,viewPortWidth,viewPortHeight,backgroundColor,uCount,vCount,uWrap,vWrap,uMouseSensitivity,vMouseSensitivity,uStartIndex,vStartIndex,minZoom,maxZoom,rotationDamping,downScaleToBrowser,addDownScaleGUIButton,downloadOnInteraction,imageExtension,showLoading,loadingIcon,allowFullscreen,uReverse,vReverse,hotspots,isIBooksWidget);
-      }
 
       window.onload = initKeyShotXR;
     </script>
