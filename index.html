@@ -66,32 +66,51 @@
         let autoRotate = true;
 
 //animation tự động quay
-let currentFrame = 15;
+let autoRotate = true;
+let currentFrame = 0;
+let rotateInterval = null;
 
-function startAutoRotate() {
-  setInterval(() => {
-    if (!autoRotate) return;
-    currentFrame = (currentFrame + 1) % 30; // 30 frames
-    if (typeof keyshotXR.setFrame === "function") {
-      keyshotXR.setFrame(currentFrame, keyshotXR.vIndex);
+// Kiểm tra XR đã có đủ dữ liệu chưa
+function xrReady() {
+  return (
+    typeof keyshotXR !== "undefined" &&
+    typeof keyshotXR.setFrame === "function" &&
+    keyshotXR.numFrames > 0
+  );
 }
 
-document.addEventListener("pointerdown", () => autoRotate = false);
-document.addEventListener("touchstart", () => autoRotate = false);
+// Bắt đầu xoay
+function startAutoRotate() {
+  if (!xrReady()) return;
 
-function waitUntilLoaded() {
-  // Một số phiên bản XR có biến keyshotXR.loaded
-  if (keyshotXR.loaded === true) {
+  const totalFrames = keyshotXR.numFrames || 30;
+
+  rotateInterval = setInterval(() => {
+    if (!autoRotate) return;
+
+    currentFrame = (currentFrame + 1) % totalFrames;
+    keyshotXR.setFrame(currentFrame, keyshotXR.vIndex);
+  }, 80);
+}
+
+// Stop khi user tương tác
+function stopRotate() {
+  autoRotate = false;
+}
+document.addEventListener("pointerdown", stopRotate);
+document.addEventListener("touchstart", stopRotate);
+
+// Đợi XR load xong rồi mới chạy auto rotate
+function waitForXR() {
+  if (xrReady() && keyshotXR.loaded === true) {
     startAutoRotate();
     return;
   }
-
-  // Không có biến loaded → đợi 1 tí rồi check lại
-  setTimeout(waitUntilLoaded, 100);
+  requestAnimationFrame(waitForXR);
 }
 
-// Bắt đầu chờ load
-waitUntilLoaded();
+// Bắt đầu đợi XR load
+waitForXR();
 
 //thuộc code của Keyshot ban đầu
         keyshotXR = new keyshotXR(nameOfDiv,folderName,viewPortWidth,viewPortHeight,backgroundColor,uCount,vCount,uWrap,vWrap,uMouseSensitivity,vMouseSensitivity,uStartIndex,vStartIndex,minZoom,maxZoom,rotationDamping,downScaleToBrowser,addDownScaleGUIButton,downloadOnInteraction,imageExtension,showLoading,loadingIcon,allowFullscreen,uReverse,vReverse,hotspots,isIBooksWidget);
