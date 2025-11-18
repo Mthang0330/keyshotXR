@@ -94,7 +94,7 @@ function getFrame() {
 
 // Auto-rotate
 function startAutoRotate() {
-  if (autoRotateInterval) return;
+  if (autoRotateInterval) return; // tránh chạy nhiều lần
 
   autoRotateInterval = setInterval(function() {
     if (!autoRotate) return;
@@ -103,7 +103,8 @@ function startAutoRotate() {
     currentU++;
     if (currentU >= TOTAL_U) currentU = U_WRAP ? 0 : TOTAL_U - 1;
 
-    keyshotXR.setFrame(getFrame());
+    const linearFrame = currentU + currentV * TOTAL_U;
+    keyshotXR.setFrame(linearFrame);
   }, 80);
 }
 
