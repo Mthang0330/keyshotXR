@@ -102,10 +102,6 @@ function startAutoRotate() {
   }, 80); // tốc độ xoay
 }
 
-// Dừng auto-rotate khi user chạm
-document.addEventListener("pointerdown", () => autoRotate = false);
-document.addEventListener("touchstart", () => autoRotate = false);
-
 // Kiểm tra XR đã sẵn sàng rồi start
 function waitForXR() {
   if (typeof keyshotXR === "object" && typeof keyshotXR.setFrame === "function") {
