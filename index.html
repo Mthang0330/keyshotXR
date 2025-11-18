@@ -67,13 +67,8 @@
 
         keyshotXR = new keyshotXR(nameOfDiv,folderName,viewPortWidth,viewPortHeight,backgroundColor,uCount,vCount,uWrap,vWrap,uMouseSensitivity,vMouseSensitivity,uStartIndex,vStartIndex,minZoom,maxZoom,rotationDamping,downScaleToBrowser,addDownScaleGUIButton,downloadOnInteraction,imageExtension,showLoading,loadingIcon,allowFullscreen,uReverse,vReverse,hotspots,isIBooksWidget);
       }
-   
-      window.onload = initKeyShotXR;
-    </script>
-  </head>
-  <body oncontextmenu="return false;">
-    <div id="KeyShotXR"></div>
-    <script>
+
+      
 let autoRotate = true;
 let currentU = uStartIndex || 0; // frame ngang bắt đầu
 let currentV = vStartIndex || 0; // frame dọc bắt đầu
@@ -129,6 +124,11 @@ function waitForXR() {
 }
 
 waitForXR();
-</script>
+      
+      window.onload = initKeyShotXR;
+    </script>
+  </head>
+  <body oncontextmenu="return false;">
+    <div id="KeyShotXR"></div>
   </body>
 </html>
