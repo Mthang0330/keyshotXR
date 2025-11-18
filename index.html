@@ -63,7 +63,37 @@
         var vReverse = false;
         var hotspots = {};
         var isIBooksWidget = false;
-        
+        let autoRotate = true;
+
+//animation tự động quay
+let currentFrame = 15;
+
+function startAutoRotate() {
+  setInterval(() => {
+    if (!autoRotate) return;
+    currentFrame = (currentFrame + 1) % 30; // 30 frames
+    keyshotXR.setFrame(currentFrame, keyshotXR.vIndex);
+  }, 80);
+}
+
+document.addEventListener("pointerdown", () => autoRotate = false);
+document.addEventListener("touchstart", () => autoRotate = false);
+
+function waitUntilLoaded() {
+  // Một số phiên bản XR có biến keyshotXR.loaded
+  if (keyshotXR.loaded === true) {
+    startAutoRotate();
+    return;
+  }
+
+  // Không có biến loaded → đợi 1 tí rồi check lại
+  setTimeout(waitUntilLoaded, 100);
+}
+
+// Bắt đầu chờ load
+waitUntilLoaded();
+
+//thuộc code của Keyshot ban đầu
         keyshotXR = new keyshotXR(nameOfDiv,folderName,viewPortWidth,viewPortHeight,backgroundColor,uCount,vCount,uWrap,vWrap,uMouseSensitivity,vMouseSensitivity,uStartIndex,vStartIndex,minZoom,maxZoom,rotationDamping,downScaleToBrowser,addDownScaleGUIButton,downloadOnInteraction,imageExtension,showLoading,loadingIcon,allowFullscreen,uReverse,vReverse,hotspots,isIBooksWidget);
       }
 
