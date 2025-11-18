@@ -90,33 +90,53 @@
       transition: opacity 0.3s;
   ">
     <img src="L5WHR225 (360 View).43/files/xr_hand.gif" 
-         style="width: 100px; height: 100px; filter: invert(1); background: #000000; top: 120px; left: 66px" />
+         style="width: 80px; height: 80px; filter: invert(1); background: #000000; margin-top: 120px; margin-left: 66px" />
   </div>
 </div>
 <script>
   let hintTimeout = null;
+  let isInteracting = false;
 
 // Show overlay hint sau 5s nếu không tương tác
 function scheduleHint() {
   clearTimeout(hintTimeout);
-  hintTimeout = setTimeout(() => {
-    const hint = document.getElementById("xrHint");
-    if(hint) hint.style.opacity = 0.3;
-  }, 5000); // 5 giây
+
+    if(!isInteracting) {
+    hintTimeout = setTimeout(() => {
+      const hint = document.getElementById("xrHint");
+      if(hint) hint.style.opacity = 1;
+    }, 5000); // 5 giây
+  }
+}
+  
+// Ẩn overlay khi user bắt đầu tương tác
+function onInteractionStart() {
+  isInteracting = true;
+  clearTimeout(hintTimeout);
+
+  const hint = document.getElementById("xrHint");
+  if (hint) hint.style.opacity = 0;
 }
 
-// Ẩn overlay khi user tương tác
-function hideHint() {
-  const hint = document.getElementById("xrHint");
-  if(hint) hint.style.opacity = 0;
-}
+// Khi user kết thúc tương tác → restart vòng lặp
+function onInteractionEnd() {
+  isInteracting = false;
+  scheduleHint();
+
+// Binding event
+const xrWrapper = document.getElementById("xrWrapper");
 
 // Gắn sự kiện tương tác
-const xrWrapper = document.getElementById("xrWrapper");
-if(xrWrapper) {
-  ["pointerdown", "touchstart"].forEach(evt => {
-    xrWrapper.addEventListener(evt, hideHint);
-  });
+if (xrWrapper) {
+  // Bắt đầu tương tác (drag start / touch start)
+  ["pointerdown", "touchstart"].forEach(evt =>
+    xrWrapper.addEventListener(evt, onInteractionStart)
+  );
+
+  // Kết thúc tương tác (thả tay khỏi drag)
+  ["pointerup", "touchend", "pointercancel"].forEach(evt =>
+    xrWrapper.addEventListener(evt, onInteractionEnd)
+  );
 }
 
 // Khởi tạo vòng lặp hint
