@@ -93,5 +93,35 @@
          style="width: 100px; height: 100px;" />
   </div>
 </div>
+<script>
+  let hintTimeout = null;
+
+// Show overlay hint sau 5s nếu không tương tác
+function scheduleHint() {
+  clearTimeout(hintTimeout);
+  hintTimeout = setTimeout(() => {
+    const hint = document.getElementById("xrHint");
+    if(hint) hint.style.opacity = 1;
+  }, 5000); // 5 giây
+}
+
+// Ẩn overlay khi user tương tác
+function hideHint() {
+  const hint = document.getElementById("xrHint");
+  if(hint) hint.style.opacity = 0;
+  scheduleHint(); // restart vòng lặp
+}
+
+// Gắn sự kiện tương tác
+const xrWrapper = document.getElementById("xrWrapper");
+if(xrWrapper) {
+  ["pointerdown", "touchstart", "mousemove"].forEach(evt => {
+    xrWrapper.addEventListener(evt, hideHint);
+  });
+}
+
+// Khởi tạo vòng lặp hint
+scheduleHint();
+</script>
     </body>
 </html>
