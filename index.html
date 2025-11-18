@@ -95,48 +95,30 @@
 </div>
 <script>
   let hintTimeout = null;
-  let isInteracting = false;
 
 // Show overlay hint sau 5s nếu không tương tác
 function scheduleHint() {
   clearTimeout(hintTimeout);
-
-    if(!isInteracting) {
-    hintTimeout = setTimeout(() => {
-      const hint = document.getElementById("xrHint");
-      if(hint) hint.style.opacity = 1;
-    }, 5000); // 5 giây
-  }
+  hintTimeout = setTimeout(() => {
+    const hint = document.getElementById("xrHint");
+    if(hint) hint.style.opacity = 1;
+  }, 5000); // 5 giây
 }
-  
-// Ẩn overlay khi user bắt đầu tương tác
-function onInteractionStart() {
-  isInteracting = true;
-  clearTimeout(hintTimeout);
 
+// Ẩn overlay khi user tương tác
+function hideHint() {
   const hint = document.getElementById("xrHint");
-  if (hint) hint.style.opacity = 0;
+  if(hint) hint.style.opacity = 0;
+  scheduleHint(); // restart vòng lặp
+  clearTimeout(hintTimeout); // tạm dừng timer
 }
-
-// Khi user kết thúc tương tác → restart vòng lặp
-function onInteractionEnd() {
-  isInteracting = false;
-  scheduleHint();
-
-// Binding event
-const xrWrapper = document.getElementById("xrWrapper");
 
 // Gắn sự kiện tương tác
-if (xrWrapper) {
-  // Bắt đầu tương tác (drag start / touch start)
-  ["pointerdown", "touchstart"].forEach(evt =>
-    xrWrapper.addEventListener(evt, onInteractionStart)
-  );
-
-  // Kết thúc tương tác (thả tay khỏi drag)
-  ["pointerup", "touchend", "pointercancel"].forEach(evt =>
-    xrWrapper.addEventListener(evt, onInteractionEnd)
-  );
+const xrWrapper = document.getElementById("xrWrapper");
+if(xrWrapper) {
+  ["pointerdown", "touchstart", "mousemove"].forEach(evt => {
+    xrWrapper.addEventListener(evt, hideHint);
+  });
 }
 
 // Khởi tạo vòng lặp hint
