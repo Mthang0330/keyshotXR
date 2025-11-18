@@ -65,6 +65,33 @@
         var isIBooksWidget = false;
         let autoRotate = true;
 
+let autoRotate = true;
+let currentFrame = 0;
+
+// Đợi XR load xong rồi mới bắt đầu auto rotate
+function waitForXRReady() {
+  if (keyshotXR.loaded) {
+    startAutoRotate();
+  } else {
+    setTimeout(waitForXRReady, 100);
+  }
+}
+
+waitForXRReady();
+
+function startAutoRotate() {
+  setInterval(() => {
+    if (!autoRotate) return;
+    currentFrame = (currentFrame + 1) % keyshotXR.uCount;
+    keyshotXR.setFrame(currentFrame, keyshotXR.vIndex);
+  }, 80);
+}
+
+// Khi user tương tác → tắt auto rotate
+document.addEventListener("pointerdown", () => autoRotate = false);
+document.addEventListener("touchstart", () => autoRotate = false);
+
+
         keyshotXR = new keyshotXR(nameOfDiv,folderName,viewPortWidth,viewPortHeight,backgroundColor,uCount,vCount,uWrap,vWrap,uMouseSensitivity,vMouseSensitivity,uStartIndex,vStartIndex,minZoom,maxZoom,rotationDamping,downScaleToBrowser,addDownScaleGUIButton,downloadOnInteraction,imageExtension,showLoading,loadingIcon,allowFullscreen,uReverse,vReverse,hotspots,isIBooksWidget);
       }
 
