@@ -65,21 +65,6 @@
         var isIBooksWidget = false;
         let autoRotate = true;
 
-//animation tự động quay
-let autoRotate = true;
-let currentFrame = 0;
-let rotateInterval = null;
-
-// Kiểm tra XR đã có đủ dữ liệu chưa
-function xrReady() {
-  return (
-    typeof keyshotXR !== "undefined" &&
-    typeof keyshotXR.setFrame === "function" &&
-    keyshotXR.numFrames > 0
-  );
-}
-
-
         keyshotXR = new keyshotXR(nameOfDiv,folderName,viewPortWidth,viewPortHeight,backgroundColor,uCount,vCount,uWrap,vWrap,uMouseSensitivity,vMouseSensitivity,uStartIndex,vStartIndex,minZoom,maxZoom,rotationDamping,downScaleToBrowser,addDownScaleGUIButton,downloadOnInteraction,imageExtension,showLoading,loadingIcon,allowFullscreen,uReverse,vReverse,hotspots,isIBooksWidget);
       }
 
