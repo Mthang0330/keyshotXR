@@ -75,40 +75,56 @@
     <div id="KeyShotXR"></div>
     <script>
 let autoRotate = true;
-let currentFrame = 15;
+let currentU = uStartIndex || 0; // frame ngang bắt đầu
+let currentV = vStartIndex || 0; // frame dọc bắt đầu
 let autoRotateInterval = null;
+
+// Hàm tính frame linear
+function getLinearFrame(u, v) {
+  return u + v * uCount;
+}
 
 // Hàm start auto-rotate
 function startAutoRotate() {
-  if (autoRotateInterval) return;
+  if (autoRotateInterval) return; // tránh chạy nhiều lần
 
   autoRotateInterval = setInterval(() => {
     if (!autoRotate) return;
 
-    if (typeof keyshotXR?.setFrame === "function") {
-      const totalFrames = keyshotXR.numFrames || 30;
-      currentFrame = (currentFrame + 1) % totalFrames;
-      keyshotXR.setFrame(currentFrame, keyshotXR.vIndex || 0);
+    if (typeof keyshotXR === "object" && typeof keyshotXR.setFrame === "function") {
+      // Tăng frame ngang
+      currentU++;
+      if (currentU >= uCount) {
+        if (uWrap) {
+          currentU = 0; // wrap lại nếu bật
+        } else {
+          currentU = uCount - 1; // giữ ở cuối nếu không wrap
+        }
+      }
+
+      // Nếu muốn xoay theo V (dọc), có thể thêm logic tương tự
+      // currentV = (currentV + 0) % vCount;
+
+      // Gọi setFrame linear
+      keyshotXR.setFrame(getLinearFrame(currentU, currentV));
     }
-  }, 80);
+  }, 80); // tốc độ xoay (ms)
 }
 
 // Dừng auto-rotate khi user tương tác
 document.addEventListener("pointerdown", () => autoRotate = false);
 document.addEventListener("touchstart", () => autoRotate = false);
 
-// ===== Check liên tục đến khi XR sẵn sàng =====
+// Kiểm tra XR đã sẵn sàng rồi start
 function waitForXR() {
-  if (typeof keyshotXR !== "undefined" && typeof keyshotXR.setFrame === "function") {
-    startAutoRotate(); // XR sẵn sàng, bắt đầu auto-rotate
+  if (typeof keyshotXR === "object" && typeof keyshotXR.setFrame === "function") {
+    startAutoRotate();
   } else {
-    requestAnimationFrame(waitForXR); // thử lại frame tiếp theo
+    requestAnimationFrame(waitForXR);
   }
 }
 
-// Bắt đầu kiểm tra
 waitForXR();
 </script>
-
   </body>
 </html>
