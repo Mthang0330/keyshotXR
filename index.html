@@ -83,58 +83,32 @@
       top: 0; left: 0; right: 0; bottom: 0;
       background: transparent;
       display: flex;
-      justify-content: flex-start;
-      align-items: flex-start;
+      justify-content: flex-end;
+      align-items: flex-end;
       pointer-events: none; /* không chặn tương tác */
       opacity: 100%;
       transition: opacity 0.3s;
   ">
     <img src="L5WHR225 (360 View).43/files/xr_hand.gif" 
-         style="width: 80px; height: 80px; filter: invert(1); background: #000000; margin-top: 120px; margin-left: 66px" />
+         style="width: 60px; height: 60px; filter: invert(1); background: #000000; margin-bottom: 15px; margin-right: 15px" />
   </div>
 </div>
 <script>
- document.addEventListener("DOMContentLoaded", () => {
-  let hintTimeout = null;
-  let isInteracting = false; // trạng thái user đang tương tác
+let hintTimeout = null;
 
-  // Show overlay hint sau 5s nếu không tương tác
-  function scheduleHint() {
-    clearTimeout(hintTimeout);
-    if (!isInteracting) {
-      hintTimeout = setTimeout(() => {
-        const hint = document.getElementById("xrHint");
-        if (hint) hint.style.opacity = 1;
-      }, 5000);
-    }
-  }
+// Ẩn overlay khi user tương tác
+function hideHint() {
+  const hint = document.getElementById("xrHint");
+  if(hint) hint.style.opacity = 0;
+}
 
-  // Ẩn overlay khi user bắt đầu tương tác
-  function onInteractionStart() {
-    isInteracting = true;
-    const hint = document.getElementById("xrHint");
-    if (hint) hint.style.opacity = 0;
-    clearTimeout(hintTimeout); // tạm dừng timer
-  }
-
-  // Khi user kết thúc tương tác → restart vòng lặp
-  function onInteractionEnd() {
-    isInteracting = false;
-    scheduleHint();
-  }
-
-  const xrWrapper = document.getElementById("xrWrapper");
-  if (xrWrapper) {
-    ["pointerdown", "touchstart"].forEach(evt =>
-      xrWrapper.addEventListener(evt, onInteractionStart)
-    );
-    ["pointerup", "touchend", "pointercancel"].forEach(evt =>
-      xrWrapper.addEventListener(evt, onInteractionEnd)
-    );
-  }
-
-  // Khởi tạo vòng lặp lần đầu
-  scheduleHint();
+// Gắn sự kiện tương tác
+const xrWrapper = document.getElementById("xrWrapper");
+if(xrWrapper) {
+  ["pointerdown", "touchstart", "mousemove"].forEach(evt => {
+    xrWrapper.addEventListener(evt, hideHint);
+  });
+}
 </script>
     </body>
 </html>
