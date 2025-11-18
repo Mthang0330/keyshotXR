@@ -67,37 +67,46 @@
 
         keyshotXR = new keyshotXR(nameOfDiv,folderName,viewPortWidth,viewPortHeight,backgroundColor,uCount,vCount,uWrap,vWrap,uMouseSensitivity,vMouseSensitivity,uStartIndex,vStartIndex,minZoom,maxZoom,rotationDamping,downScaleToBrowser,addDownScaleGUIButton,downloadOnInteraction,imageExtension,showLoading,loadingIcon,allowFullscreen,uReverse,vReverse,hotspots,isIBooksWidget);
       }
-
-// Bật/tắt auto rotate
-let autoRotate = true;
-
-// Frame bắt đầu
-let currentFrame = 15;
-
-// Tổng số frame ngang (horizontal)
-const totalFrames = keyshotXR && keyshotXR.numFrames ? keyshotXR.numFrames : 30;
-
-// Hàm auto rotate
-function startAutoRotate() {
-  setInterval(() => {
-    if (!autoRotate) return;
-
-    currentFrame = (currentFrame + 1) % totalFrames;
-
-    // Xoay XR bằng cách đổi frame
-    if (typeof keyshotXR.setFrame === "function") {
-      keyshotXR.setFrame(currentFrame, keyshotXR.vIndex);
-    }
-
-  }, 80); // tốc độ xoay
-}
-
-// Khi user chạm → dừng xoay
-document.addEventListener("pointerdown", () => autoRotate = false);
-document.addEventListener("touchstart", () => autoRotate = false);
-      
+   
       window.onload = initKeyShotXR;
     </script>
+    <script>
+  // ======= Cấu hình =======
+  let autoRotate = true;       // Bật/tắt auto rotate
+  let currentFrame = 15;       // Frame bắt đầu
+  let autoRotateInterval = null;
+
+  // ======= Hàm start auto-rotate =======
+  function startAutoRotate() {
+    if (autoRotateInterval) return; // tránh chạy nhiều lần
+
+    autoRotateInterval = setInterval(() => {
+      if (!autoRotate) return;
+
+      // Cập nhật frame
+      if (typeof keyshotXR?.setFrame === "function") {
+        const totalFrames = keyshotXR.numFrames || 30;
+        currentFrame = (currentFrame + 1) % totalFrames;
+        keyshotXR.setFrame(currentFrame, keyshotXR.vIndex || 0);
+      }
+
+    }, 80); // tốc độ xoay (ms)
+  }
+
+  // ======= Dừng auto-rotate khi user tương tác =======
+  document.addEventListener("pointerdown", () => autoRotate = false);
+  document.addEventListener("touchstart", () => autoRotate = false);
+
+  // ======= Đợi KeyShotXR load xong rồi start auto-rotate =======
+  document.addEventListener("DOMContentLoaded", () => {
+    const checkXR = setInterval(() => {
+      if (typeof keyshotXR !== "undefined" && typeof keyshotXR.setFrame === "function") {
+        clearInterval(checkXR);  // XR đã sẵn sàng
+        startAutoRotate();       // Bắt đầu auto rotate
+      }
+    }, 100);
+  });
+</script>
   </head>
   <body oncontextmenu="return false;">
     <div id="KeyShotXR"></div>
