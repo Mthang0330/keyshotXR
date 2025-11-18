@@ -35,7 +35,6 @@
     <script type="text/javascript">
       var keyshotXR;
       
-  var uCount, vCount, uStartIndex, vStartIndex, uWrap;
   var currentU = 0;
   var currentV = 0;
   var autoRotate = true;
@@ -47,14 +46,14 @@
         var viewPortWidth = 800;
         var viewPortHeight = 800;
         var backgroundColor = "#ffffff";
-        uCount = 30;
-        vCount = 9;
-        uWrap = true;
-        var vWrapLocal = false;
+        var uCount = 30;
+        var vCount = 9;
+        var uWrap = true;
+        var vWrap = false;
         var uMouseSensitivity = -0.0833333;
         var vMouseSensitivity = 0.05625;
-        uStartIndex = 15;
-        vStartIndex = 7;
+        var uStartIndex = 15;
+        var vStartIndex = 7;
         var minZoom = 1;
         var maxZoom = 1;
         var rotationDamping = 0.96;
@@ -72,40 +71,37 @@
               
         keyshotXR = new keyshotXR(nameOfDiv,folderName,viewPortWidth,viewPortHeight,backgroundColor,uCount,vCount,uWrap,vWrap,uMouseSensitivity,vMouseSensitivity,uStartIndex,vStartIndex,minZoom,maxZoom,rotationDamping,downScaleToBrowser,addDownScaleGUIButton,downloadOnInteraction,imageExtension,showLoading,loadingIcon,allowFullscreen,uReverse,vReverse,hotspots,isIBooksWidget);
     
-      // Bắt đầu auto-rotate ngay sau khi XR init xong
-    startAutoRotate();
-  }
+      // Set frame bắt đầu dựa trên XR
+  currentU = uStartIndex;
+  currentV = vStartIndex;
 
-  // Hàm tính linear frame
-  function getFrame() {
-    return currentU + currentV * uCount;
-  }
+  // Bắt đầu auto-rotate sau khi XR init xong
+  startAutoRotate(uCount, uWrap);
+}
 
-  // Hàm auto-rotate
-  function startAutoRotate() {
-    if (autoRotateInterval) return; // tránh chạy nhiều lần
+// Tính linear frame
+function getFrame(uCount) {
+  return currentU + currentV * uCount;
+}
 
-    currentU = uStartIndex || 0;
-    currentV = vStartIndex || 0;
+// Auto-rotate
+function startAutoRotate(uCount, uWrap) {
+  if (autoRotateInterval) return;
 
-    autoRotateInterval = setInterval(function () {
-      if (!autoRotate) return;
-      if (!keyshotXR || typeof keyshotXR.setFrame !== "function") return;
+  autoRotateInterval = setInterval(function() {
+    if (!autoRotate) return;
+    if (!keyshotXR || typeof keyshotXR.setFrame !== "function") return;
 
-      // Tăng frame ngang
-      currentU++;
-      if (currentU >= uCount) {
-        currentU = uWrap ? 0 : uCount - 1;
-      }
+    currentU++;
+    if (currentU >= uCount) currentU = uWrap ? 0 : uCount - 1;
 
-      // Gọi setFrame để hiển thị frame mới
-      keyshotXR.setFrame(getFrame());
-    }, 80);
-  }
+    keyshotXR.setFrame(getFrame(uCount));
+  }, 80);
+}
 
-  // Dừng auto-rotate khi người dùng chạm
-  document.addEventListener("pointerdown", function () { autoRotate = false; });
-  document.addEventListener("touchstart", function () { autoRotate = false; });
+// Dừng khi user tương tác
+document.addEventListener("pointerdown", function() { autoRotate = false; });
+document.addEventListener("touchstart", function() { autoRotate = false; });
 
       window.onload = initKeyShotXR;
     </script>
