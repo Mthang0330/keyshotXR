@@ -71,5 +71,51 @@
   </head>
   <body oncontextmenu="return false;">
     <div id="KeyShotXR"></div>
+    <script>
+let autoRotate = true;
+let currentU = uStartIndex || 0;
+let currentV = vStartIndex || 0;
+let autoRotateInterval = null;
+
+// Tính linear frame
+function getFrame() {
+  return currentU + currentV * uCount;
+}
+
+// Start auto-rotate
+function startAutoRotate() {
+  if (autoRotateInterval) return; // tránh chạy nhiều lần
+
+  autoRotateInterval = setInterval(() => {
+    if (!autoRotate) return;
+    if (!keyshotXR || typeof keyshotXR.setFrame !== "function") return;
+
+    // Tăng frame ngang
+    currentU++;
+    if (currentU >= uCount) {
+      currentU = uWrap ? 0 : uCount - 1; // wrap nếu bật
+    }
+
+    // Gọi setFrame linear
+    keyshotXR.setFrame(getFrame());
+
+  }, 80); // tốc độ xoay
+}
+
+// Dừng auto-rotate khi user chạm
+document.addEventListener("pointerdown", () => autoRotate = false);
+document.addEventListener("touchstart", () => autoRotate = false);
+
+// Kiểm tra XR đã sẵn sàng rồi start
+function waitForXR() {
+  if (typeof keyshotXR === "object" && typeof keyshotXR.setFrame === "function") {
+    startAutoRotate();
+  } else {
+    requestAnimationFrame(waitForXR);
+  }
+}
+
+waitForXR();
+</script>
   </body>
 </html>
