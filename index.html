@@ -73,5 +73,25 @@
   </head>
   <body oncontextmenu="return false;">
     <div id="KeyShotXR"></div>
+    <div id="xrWrapper" style="position: relative; width: 100%; height: 100%;">
+  <!-- 3D XR canvas sẽ được render ở đây -->
+  <div id="KeyShotXR"></div>
+
+  <!-- Overlay GIF + background hint -->
+  <div id="xrHint" style="
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.3);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      pointer-events: none; /* không chặn tương tác */
+      opacity: 0;
+      transition: opacity 0.3s;
+  ">
+    <img src="L5WHR225 (360 View).43/files/xr_hand.gif" 
+         style="width: 100px; height: 100px;" />
+  </div>
+</div>
     </body>
 </html>
