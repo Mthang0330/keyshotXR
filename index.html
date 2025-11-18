@@ -110,7 +110,6 @@ function hideHint() {
   const hint = document.getElementById("xrHint");
   if(hint) hint.style.opacity = 0;
   scheduleHint(); // restart vòng lặp
-  clearTimeout(hintTimeout); // tạm dừng timer
 }
 
 // Gắn sự kiện tương tác
