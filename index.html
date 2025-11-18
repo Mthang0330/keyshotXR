@@ -34,7 +34,13 @@
     <script type="text/javascript" src="L5WHR225 (360 View).43/files/KeyShotXR.js"></script>
     <script type="text/javascript">
       var keyshotXR;
-
+      
+  var uCount, vCount, uStartIndex, vStartIndex, uWrap;
+  var currentU = 0;
+  var currentV = 0;
+  var autoRotate = true;
+  var autoRotateInterval = null;
+      
       function initKeyShotXR() {
         var nameOfDiv = "KeyShotXR";
         var folderName = "L5WHR225 (360 View).43";
@@ -63,55 +69,49 @@
         var vReverse = false;
         var hotspots = {};
         var isIBooksWidget = false;
-       
+              
         keyshotXR = new keyshotXR(nameOfDiv,folderName,viewPortWidth,viewPortHeight,backgroundColor,uCount,vCount,uWrap,vWrap,uMouseSensitivity,vMouseSensitivity,uStartIndex,vStartIndex,minZoom,maxZoom,rotationDamping,downScaleToBrowser,addDownScaleGUIButton,downloadOnInteraction,imageExtension,showLoading,loadingIcon,allowFullscreen,uReverse,vReverse,hotspots,isIBooksWidget);
       }
+
+      // Bắt đầu auto-rotate ngay sau khi XR init xong
+    startAutoRotate();
+  }
+
+  // Hàm tính linear frame
+  function getFrame() {
+    return currentU + currentV * uCount;
+  }
+
+  // Hàm auto-rotate
+  function startAutoRotate() {
+    if (autoRotateInterval) return; // tránh chạy nhiều lần
+
+    currentU = uStartIndex || 0;
+    currentV = vStartIndex || 0;
+
+    autoRotateInterval = setInterval(function () {
+      if (!autoRotate) return;
+      if (!keyshotXR || typeof keyshotXR.setFrame !== "function") return;
+
+      // Tăng frame ngang
+      currentU++;
+      if (currentU >= uCount) {
+        currentU = uWrap ? 0 : uCount - 1;
+      }
+
+      // Gọi setFrame để hiển thị frame mới
+      keyshotXR.setFrame(getFrame());
+    }, 80);
+  }
+
+  // Dừng auto-rotate khi người dùng chạm
+  document.addEventListener("pointerdown", function () { autoRotate = false; });
+  document.addEventListener("touchstart", function () { autoRotate = false; });
+
       window.onload = initKeyShotXR;
     </script>
   </head>
   <body oncontextmenu="return false;">
     <div id="KeyShotXR"></div>
-    <script>
-let autoRotate = true;
-let currentU = uStartIndex || 0;
-let currentV = vStartIndex || 0;
-let autoRotateInterval = null;
-
-// Tính linear frame
-function getFrame() {
-  return currentU + currentV * uCount;
-}
-
-// Start auto-rotate
-function startAutoRotate() {
-  if (autoRotateInterval) return; // tránh chạy nhiều lần
-
-  autoRotateInterval = setInterval(() => {
-    if (!autoRotate) return;
-    if (!keyshotXR || typeof keyshotXR.setFrame !== "function") return;
-
-    // Tăng frame ngang
-    currentU++;
-    if (currentU >= uCount) {
-      currentU = uWrap ? 0 : uCount - 1; // wrap nếu bật
-    }
-
-    // Gọi setFrame linear
-    keyshotXR.setFrame(getFrame());
-
-  }, 80); // tốc độ xoay
-}
-
-// Kiểm tra XR đã sẵn sàng rồi start
-function waitForXR() {
-  if (typeof keyshotXR === "object" && typeof keyshotXR.setFrame === "function") {
-    startAutoRotate();
-  } else {
-    requestAnimationFrame(waitForXR);
-  }
-}
-
-waitForXR();
-</script>
-  </body>
+    </body>
 </html>
