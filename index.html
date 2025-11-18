@@ -115,7 +115,7 @@ function hideHint() {
 // Gắn sự kiện tương tác
 const xrWrapper = document.getElementById("xrWrapper");
 if(xrWrapper) {
-  ["pointerdown", "touchstart", "mousemove"].forEach(evt => {
+  ["pointerdown", "touchstart"].forEach(evt => {
     xrWrapper.addEventListener(evt, hideHint);
   });
 }
