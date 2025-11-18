@@ -94,34 +94,47 @@
   </div>
 </div>
 <script>
+ document.addEventListener("DOMContentLoaded", () => {
   let hintTimeout = null;
+  let isInteracting = false; // trạng thái user đang tương tác
 
-// Show overlay hint sau 5s nếu không tương tác
-function scheduleHint() {
-  clearTimeout(hintTimeout);
-  hintTimeout = setTimeout(() => {
+  // Show overlay hint sau 5s nếu không tương tác
+  function scheduleHint() {
+    clearTimeout(hintTimeout);
+    if (!isInteracting) {
+      hintTimeout = setTimeout(() => {
+        const hint = document.getElementById("xrHint");
+        if (hint) hint.style.opacity = 1;
+      }, 5000);
+    }
+  }
+
+  // Ẩn overlay khi user bắt đầu tương tác
+  function onInteractionStart() {
+    isInteracting = true;
     const hint = document.getElementById("xrHint");
-    if(hint) hint.style.opacity = 1;
-  }, 5000); // 5 giây
-}
+    if (hint) hint.style.opacity = 0;
+    clearTimeout(hintTimeout); // tạm dừng timer
+  }
 
-// Ẩn overlay khi user tương tác
-function hideHint() {
-  const hint = document.getElementById("xrHint");
-  if(hint) hint.style.opacity = 0;
-  scheduleHint(); // restart vòng lặp
-}
+  // Khi user kết thúc tương tác → restart vòng lặp
+  function onInteractionEnd() {
+    isInteracting = false;
+    scheduleHint();
+  }
 
-// Gắn sự kiện tương tác
-const xrWrapper = document.getElementById("xrWrapper");
-if(xrWrapper) {
-  ["pointerdown", "touchstart", "ponitermove"].forEach(evt => {
-    xrWrapper.addEventListener(evt, hideHint);
-  });
-}
+  const xrWrapper = document.getElementById("xrWrapper");
+  if (xrWrapper) {
+    ["pointerdown", "touchstart"].forEach(evt =>
+      xrWrapper.addEventListener(evt, onInteractionStart)
+    );
+    ["pointerup", "touchend", "pointercancel"].forEach(evt =>
+      xrWrapper.addEventListener(evt, onInteractionEnd)
+    );
+  }
 
-// Khởi tạo vòng lặp hint
-scheduleHint();
+  // Khởi tạo vòng lặp lần đầu
+  scheduleHint();
 </script>
     </body>
 </html>
