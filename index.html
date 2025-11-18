@@ -71,42 +71,42 @@
       window.onload = initKeyShotXR;
     </script>
     <script>
-  // ======= Cấu hình =======
-  let autoRotate = true;       // Bật/tắt auto rotate
-  let currentFrame = 15;       // Frame bắt đầu
-  let autoRotateInterval = null;
+let autoRotate = true;
+let currentFrame = 15;
+let autoRotateInterval = null;
 
-  // ======= Hàm start auto-rotate =======
-  function startAutoRotate() {
-    if (autoRotateInterval) return; // tránh chạy nhiều lần
+// Hàm start auto-rotate
+function startAutoRotate() {
+  if (autoRotateInterval) return;
 
-    autoRotateInterval = setInterval(() => {
-      if (!autoRotate) return;
+  autoRotateInterval = setInterval(() => {
+    if (!autoRotate) return;
 
-      // Cập nhật frame
-      if (typeof keyshotXR?.setFrame === "function") {
-        const totalFrames = keyshotXR.numFrames || 30;
-        currentFrame = (currentFrame + 1) % totalFrames;
-        keyshotXR.setFrame(currentFrame, keyshotXR.vIndex || 0);
-      }
+    if (typeof keyshotXR?.setFrame === "function") {
+      const totalFrames = keyshotXR.numFrames || 30;
+      currentFrame = (currentFrame + 1) % totalFrames;
+      keyshotXR.setFrame(currentFrame, keyshotXR.vIndex || 0);
+    }
+  }, 80);
+}
 
-    }, 80); // tốc độ xoay (ms)
+// Dừng auto-rotate khi user tương tác
+document.addEventListener("pointerdown", () => autoRotate = false);
+document.addEventListener("touchstart", () => autoRotate = false);
+
+// ===== Check liên tục đến khi XR sẵn sàng =====
+function waitForXR() {
+  if (typeof keyshotXR !== "undefined" && typeof keyshotXR.setFrame === "function") {
+    startAutoRotate(); // XR sẵn sàng, bắt đầu auto-rotate
+  } else {
+    requestAnimationFrame(waitForXR); // thử lại frame tiếp theo
   }
+}
 
-  // ======= Dừng auto-rotate khi user tương tác =======
-  document.addEventListener("pointerdown", () => autoRotate = false);
-  document.addEventListener("touchstart", () => autoRotate = false);
-
-  // ======= Đợi KeyShotXR load xong rồi start auto-rotate =======
-  document.addEventListener("DOMContentLoaded", () => {
-    const checkXR = setInterval(() => {
-      if (typeof keyshotXR !== "undefined" && typeof keyshotXR.setFrame === "function") {
-        clearInterval(checkXR);  // XR đã sẵn sàng
-        startAutoRotate();       // Bắt đầu auto rotate
-      }
-    }, 100);
-  });
+// Bắt đầu kiểm tra
+waitForXR();
 </script>
+
   </head>
   <body oncontextmenu="return false;">
     <div id="KeyShotXR"></div>
