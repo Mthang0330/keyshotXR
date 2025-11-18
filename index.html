@@ -113,10 +113,10 @@ function hideHint() {
 }
 
 // Gắn sự kiện tương tác
-const xrWrapper = document.getElementById("xrWrapper");
-if(xrWrapper) {
+const xrWrapper = document.getElementById("KeyshotXR");
+if(KeyshotXR) {
   ["pointerdown", "touchstart"].forEach(evt => {
-    xrWrapper.addEventListener(evt, hideHint);
+    KeyshotXR.addEventListener(evt, hideHint);
   });
 }
 
