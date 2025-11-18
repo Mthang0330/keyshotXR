@@ -109,14 +109,13 @@ function scheduleHint() {
 function hideHint() {
   const hint = document.getElementById("xrHint");
   if(hint) hint.style.opacity = 0;
-  scheduleHint(); // restart vòng lặp
 }
 
 // Gắn sự kiện tương tác
-const xrWrapper = document.getElementById("KeyshotXR");
-if(KeyshotXR) {
+const xrWrapper = document.getElementById("xrWrapper");
+if(xrWrapper) {
   ["pointerdown", "touchstart"].forEach(evt => {
-    KeyshotXR.addEventListener(evt, hideHint);
+    xrWrapper.addEventListener(evt, hideHint);
   });
 }
 
