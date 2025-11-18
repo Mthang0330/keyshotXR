@@ -72,8 +72,8 @@ function startAutoRotate() {
   setInterval(() => {
     if (!autoRotate) return;
     currentFrame = (currentFrame + 1) % 30; // 30 frames
-    keyshotXR.setFrame(currentFrame, keyshotXR.vIndex);
-  }, 80);
+    if (typeof keyshotXR.setFrame === "function") {
+      keyshotXR.setFrame(currentFrame, keyshotXR.vIndex);
 }
 
 document.addEventListener("pointerdown", () => autoRotate = false);
