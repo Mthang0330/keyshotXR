@@ -101,7 +101,7 @@ function scheduleHint() {
   clearTimeout(hintTimeout);
   hintTimeout = setTimeout(() => {
     const hint = document.getElementById("xrHint");
-    if(hint) hint.style.opacity = 1;
+    if(hint) hint.style.opacity = 0.3;
   }, 5000); // 5 giây
 }
 
@@ -115,7 +115,7 @@ function hideHint() {
 // Gắn sự kiện tương tác
 const xrWrapper = document.getElementById("xrWrapper");
 if(xrWrapper) {
-  ["pointerdown", "touchstart", "mousemove"].forEach(evt => {
+  ["pointerdown", "touchstart"].forEach(evt => {
     xrWrapper.addEventListener(evt, hideHint);
   });
 }
