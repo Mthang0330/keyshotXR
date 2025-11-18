@@ -80,37 +80,6 @@ function xrReady() {
 }
 
 // Bắt đầu xoay
-function startAutoRotate() {
-  if (!xrReady()) return;
-
-  const totalFrames = keyshotXR.numFrames || 30;
-
-  rotateInterval = setInterval(() => {
-    if (!autoRotate) return;
-
-    currentFrame = (currentFrame + 1) % totalFrames;
-    keyshotXR.setFrame(currentFrame, keyshotXR.vIndex);
-  }, 80);
-}
-
-// Stop khi user tương tác
-function stopRotate() {
-  autoRotate = false;
-}
-document.addEventListener("pointerdown", stopRotate);
-document.addEventListener("touchstart", stopRotate);
-
-// Đợi XR load xong rồi mới chạy auto rotate
-function waitForXR() {
-  if (xrReady() && keyshotXR.loaded === true) {
-    startAutoRotate();
-    return;
-  }
-  requestAnimationFrame(waitForXR);
-}
-
-// Bắt đầu đợi XR load
-waitForXR();
 
 //thuộc code của Keyshot ban đầu
         keyshotXR = new keyshotXR(nameOfDiv,folderName,viewPortWidth,viewPortHeight,backgroundColor,uCount,vCount,uWrap,vWrap,uMouseSensitivity,vMouseSensitivity,uStartIndex,vStartIndex,minZoom,maxZoom,rotationDamping,downScaleToBrowser,addDownScaleGUIButton,downloadOnInteraction,imageExtension,showLoading,loadingIcon,allowFullscreen,uReverse,vReverse,hotspots,isIBooksWidget);
