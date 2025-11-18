@@ -86,29 +86,33 @@ function getLinearFrame(u, v) {
 
 // Hàm start auto-rotate
 function startAutoRotate() {
-  if (autoRotateInterval) return; // tránh chạy nhiều lần
+  if (autoRotateInterval) return;
 
   autoRotateInterval = setInterval(() => {
     if (!autoRotate) return;
 
     if (typeof keyshotXR === "object" && typeof keyshotXR.setFrame === "function") {
+
       // Tăng frame ngang
       currentU++;
       if (currentU >= uCount) {
-        if (uWrap) {
-          currentU = 0; // wrap lại nếu bật
-        } else {
-          currentU = uCount - 1; // giữ ở cuối nếu không wrap
-        }
+        currentU = uWrap ? 0 : uCount - 1;
       }
 
-      // Nếu muốn xoay theo V (dọc), có thể thêm logic tương tự
-      // currentV = (currentV + 0) % vCount;
+      // Cân nhắc uReverse
+      let frameU = uReverse ? uCount - 1 - currentU : currentU;
+      let frameV = vReverse ? vCount - 1 - currentV : currentV;
 
-      // Gọi setFrame linear
-      keyshotXR.setFrame(getLinearFrame(currentU, currentV));
+      // Thử gọi theo 2 cách
+      if (keyshotXR.setFrame.length === 2) {
+        // version setFrame(uIndex, vIndex)
+        keyshotXR.setFrame(frameU, frameV);
+      } else {
+        // version linear frame
+        keyshotXR.setFrame(frameU + frameV * uCount);
+      }
     }
-  }, 80); // tốc độ xoay (ms)
+  }, 80);
 }
 
 // Dừng auto-rotate khi user tương tác
